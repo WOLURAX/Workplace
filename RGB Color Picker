@@ -1,0 +1,76 @@
+import cv2 as cv
+import numpy as np
+import matplotlib.pyplot as plt
+
+cap=cv.VideoCapture(0)
+
+while True:
+    _,I = cap.read()
+    I = cv.rectangle(I,(0,0),(200,200),(255,255,255),3)
+    J = I[0:200,0:200,:]
+    hsv_frame = cv.cvtColor(J, cv.COLOR_BGR2HSV)
+    
+    lt = np.array([110,50,50])
+    ut = np.array([130,255,255])
+    mask = cv.inRange(hsv_frame,lt,ut)
+    
+    #MAVI
+    low_blue = np.array([110,50,50])
+    high_blue = np.array([130,255,255])
+    mask_blue = cv.inRange(hsv_frame,low_blue,high_blue)
+    feat_blue = np.mean(mask_blue)
+    
+    #YESIL
+    low_green = np.array([25,52,72])
+    high_green = np.array([102,255,255])
+    mask_green = cv.inRange(hsv_frame,low_green,high_green)
+    feat_green = np.mean(mask_green)
+    
+    #KIRMIZI
+    low_red = np.array([161,155,84])
+    high_red = np.array([179,255,255])
+    mask_red = cv.inRange(hsv_frame,low_red,high_red)
+    feat_red = np.mean(mask_red)
+    
+    feat = np.mean(mask)
+    mask1 = cv.bitwise_and(J,J, mask= mask)
+    
+    if feat_blue>5:
+        cv.putText(I,'MAVI',(10,250),2,2,[255,0,0],3)
+        [x,y] = np.where(mask_blue == 255)
+        x_m = np.mean(x).astype(np.uint8)
+        y_m = np.mean(y).astype(np.uint8)
+        I = cv.circle(I,(y_m,x_m),50,(255,0,0),3)
+        cv.putText(mask1,str(feat_blue),(50,50),1,2,[255,255,255],1)
+    
+    elif  feat_green>5:   
+        cv.putText(I,'YESIL',(10,250),2,2,[0,255,0],3)
+        [x,y] = np.where(mask_green == 255)
+        x_m = np.mean(x).astype(np.uint8)
+        y_m = np.mean(y).astype(np.uint8)
+        I = cv.circle(I,(y_m,x_m),50,(0,255,0),3)
+        cv.putText(mask1,str(feat_green),(50,50),1,2,[255,255,255],1)
+   
+    elif  feat_red>5:   
+        cv.putText(I,'KIRMIZI',(10,250),2,2,[0,0,255],3)
+        [x,y] = np.where(mask_red == 255)
+        x_m = np.mean(x).astype(np.uint8)
+        y_m = np.mean(y).astype(np.uint8)
+        I = cv.circle(I,(y_m,x_m),50,(0,0,255),3)
+        cv.putText(mask1,str(feat_red),(50,50),1,2,[255,255,255],1)
+   
+    else:
+        cv.putText(I,'Renk Yok',(10,250),1,2,[255,255,255],3) 
+    
+    cv.imshow('I',I)
+    cv.imshow('J',J)
+    cv.imshow('hsv',hsv_frame)
+    cv.imshow('mask',mask)
+    cv.imshow('mask1',mask1)
+    
+    k = cv.waitKey(5)
+    if k == 27:
+        break
+    
+cv.destroyAllWindows()
+cap.release()
