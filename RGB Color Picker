@@ -33,7 +33,7 @@ while True:
     feat_red = np.mean(mask_red)
     
     feat = np.mean(mask)
-    mask1 = cv.bitwise_and(J,J, mask= mask)
+    mask1 = cv.bitwise_and(J,J, mask = mask)
     
     if feat_blue>5:
         cv.putText(I,'MAVI',(10,250),2,2,[255,0,0],3)
@@ -43,7 +43,7 @@ while True:
         I = cv.circle(I,(y_m,x_m),50,(255,0,0),3)
         cv.putText(mask1,str(feat_blue),(50,50),1,2,[255,255,255],1)
     
-    elif  feat_green>5:   
+    elif  feat_green>10:   
         cv.putText(I,'YESIL',(10,250),2,2,[0,255,0],3)
         [x,y] = np.where(mask_green == 255)
         x_m = np.mean(x).astype(np.uint8)
